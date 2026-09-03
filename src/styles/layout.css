@@ -1,0 +1,371 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Custom Window Titlebar (Tauri Frameless) */
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  flex: 0 0 38px;
+  background: var(--bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 5%, transparent);
+  user-select: none;
+  z-index: 100;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 12px;
+}
+
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+}
+
+.titlebar-brand .brand-mark {
+  width: 18px;
+  height: 18px;
+}
+
+.titlebar-brand .brand-name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.titlebar-center {
+  flex: 1;
+  height: 100%;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-left: auto;
+}
+
+.window-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
+}
+
+.window-control:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.window-control.close:hover {
+  background: #e81123;
+  color: #ffffff;
+}
+
+.window-control:active {
+  opacity: 0.85;
+}
+
+/* App Body containing Sidebar and Main View */
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar {
+  display: flex;
+  flex: 0 0 248px;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 10px 14px;
+  background: var(--bg);
+  transition: margin-left 220ms var(--ease);
+}
+
+.app.collapsed .sidebar {
+  margin-left: -248px;
+}
+
+.new-chat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  background: var(--fill);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background var(--speed) var(--ease);
+}
+
+.new-chat:hover {
+  background: var(--fill-hover);
+}
+
+.chat-list {
+  flex: 1;
+  min-height: 0;
+  margin: 10px -4px 6px;
+  padding: 0 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: 34px;
+  padding: 0 4px 0 10px;
+  border-radius: var(--r-sm);
+  color: var(--text-soft);
+  transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
+  animation: row-in 180ms var(--ease);
+}
+
+.chat-row:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.chat-row.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.chat-row-title {
+  flex: 1;
+  overflow: hidden;
+  font-size: 13px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-row-remove {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--speed) var(--ease), color var(--speed) var(--ease),
+    background var(--speed) var(--ease);
+}
+
+.chat-row:hover .chat-row-remove,
+.chat-row-remove:focus-visible {
+  opacity: 1;
+}
+
+.chat-row-remove:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.chat-row-remove .icon {
+  font-size: 16px;
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.sidebar-empty {
+  padding: 10px;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  color: var(--text-soft);
+  font-size: 13px;
+  transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
+}
+
+.nav-item:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.nav-item-label {
+  flex: 1;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-count {
+  color: var(--text-faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+}
+
+.topbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 16px 0 10px;
+}
+
+.topbar-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.topbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-group[hidden] {
+  display: none;
+}
+
+.views {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.view.entering {
+  animation: view-in 200ms var(--ease);
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.view-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: 4px 24px 40px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.lead {
+  max-width: 720px;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.drop-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  animation: fade-in 140ms var(--ease);
+}
+
+.drop-veil[hidden] {
+  display: none;
+}
+
+.drop-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 28px;
+  border-radius: var(--r-lg);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}

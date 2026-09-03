@@ -1,0 +1,272 @@
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../assets/material-symbols.woff2") format("woff2");
+}
+
+:root {
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --fill: #f1f1f3;
+  --fill-hover: #e7e7ea;
+  --fill-active: #dededf;
+  --text: #17171a;
+  --text-soft: #6c6c74;
+  --text-faint: #9a9aa2;
+  --accent: #1d4ed8;
+  --accent-hover: #1a45c0;
+  --accent-soft: #e7edfc;
+  --on-accent: #ffffff;
+  --danger: #b91c1c;
+  --danger-soft: #fdf1f1;
+  --shadow: 0 10px 30px rgb(0 0 0 / 12%), 0 2px 8px rgb(0 0 0 / 6%);
+
+  --r-sm: 8px;
+  --r: 10px;
+  --r-lg: 14px;
+  --speed: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #121215;
+  --surface: #1a1a1f;
+  --fill: #26262d;
+  --fill-hover: #303038;
+  --fill-active: #3a3a44;
+  --text: #f2f2f5;
+  --text-soft: #a0a0aa;
+  --text-faint: #71717a;
+  --accent: #7aa2ff;
+  --accent-hover: #93b4ff;
+  --accent-soft: #1f2a45;
+  --on-accent: #0d1220;
+  --danger: #f87171;
+  --danger-soft: #2a1a1c;
+  --shadow: 0 10px 30px rgb(0 0 0 / 45%), 0 2px 8px rgb(0 0 0 / 30%);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fill-active);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+  background-clip: content-box;
+}
+
+.icon {
+  flex: none;
+  font-family: "Material Symbols Outlined";
+  font-size: 20px;
+  line-height: 1;
+  font-variation-settings: "opsz" 20;
+  user-select: none;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--r-sm);
+  background: var(--fill);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background var(--speed) var(--ease), transform var(--speed) var(--ease);
+}
+
+.button:hover {
+  background: var(--fill-hover);
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button .icon {
+  font-size: 18px;
+}
+
+.button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button.primary:hover {
+  background: var(--accent-hover);
+}
+
+.button.danger {
+  color: var(--danger);
+}
+
+.button.danger:hover {
+  background: var(--danger-soft);
+}
+
+.button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  color: var(--text-soft);
+  transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
+}
+
+.icon-button:hover {
+  background: var(--fill);
+  color: var(--text);
+}
+
+.toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 380px;
+  padding: 11px 14px;
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  animation: toast-in 200ms var(--ease);
+  will-change: transform, opacity;
+}
+
+.toast.leaving {
+  animation: toast-out 160ms var(--ease) forwards;
+}
+
+.toast .icon {
+  font-size: 18px;
+  color: var(--text-soft);
+}
+
+.toast.error .icon {
+  color: var(--danger);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

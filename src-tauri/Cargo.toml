@@ -1,0 +1,30 @@
+[package]
+name = "hochat"
+version = "0.1.0"
+description = "Chatbot nativo com RAG local"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "hochat_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+futures-util = "0.3.34"
+pdf-extract = "0.12.0"
+tauri-plugin-opener = "2.5.5"
+reqwest = { version = "0.13.3", default-features = false, features = ["json", "stream", "rustls", "charset", "http2", "system-proxy"] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

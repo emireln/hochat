@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="./src/assets/hochat-logo.svg" />
+    <link rel="stylesheet" href="./src/styles/app.css" />
+    <title>HoChat</title>
+  </head>
+
+  <body>
+    <div class="app" id="app">
+      <!-- Barra de título customizada (substitui a barra nativa do OS) -->
+      <header class="window-titlebar" id="window-titlebar" data-tauri-drag-region>
+        <div class="titlebar-left" data-tauri-drag-region>
+          <div class="titlebar-brand" data-tauri-drag-region>
+            <img class="brand-mark" src="./src/assets/hochat-logo.svg" alt="" data-tauri-drag-region />
+            <span class="brand-name" data-tauri-drag-region>HoChat</span>
+          </div>
+        </div>
+
+        <div class="titlebar-center" data-tauri-drag-region></div>
+
+        <div class="window-controls">
+          <button class="window-control" id="win-minimize" title="Minimizar">
+            <svg width="11" height="1" viewBox="0 0 11 1"><rect width="11" height="1" fill="currentColor"/></svg>
+          </button>
+          <button class="window-control" id="win-maximize" title="Maximizar">
+            <svg class="icon-maximize" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><rect x="0.5" y="0.5" width="9" height="9" stroke-width="1"/></svg>
+            <svg class="icon-restore" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" style="display:none"><rect x="2.5" y="0.5" width="7" height="7" stroke-width="1"/><polyline points="0.5,2.5 0.5,9.5 7.5,9.5" stroke-width="1"/></svg>
+          </button>
+          <button class="window-control close" id="win-close" title="Fechar">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="0.5" y1="0.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="0.5" x2="0.5" y2="9.5"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="app-body">
+        <aside class="sidebar">
+          <button class="new-chat" id="new-chat">
+            <span class="icon">add</span>
+            Nova conversa
+          </button>
+
+          <nav class="chat-list" id="chat-list" aria-label="Conversas"></nav>
+
+          <div class="sidebar-footer">
+            <button class="nav-item" data-goto="docs">
+              <span class="icon">book_2</span>
+              <span class="nav-item-label">Base de conhecimento</span>
+              <span class="nav-count" id="doc-count"></span>
+            </button>
+            <button class="nav-item" data-goto="settings">
+              <span class="icon">settings</span>
+              <span class="nav-item-label">Configurações</span>
+            </button>
+          </div>
+        </aside>
+
+        <main class="main">
+          <header class="topbar">
+            <button
+              class="icon-button"
+              id="toggle-sidebar"
+              title="Recolher barra lateral (Ctrl+B)"
+            >
+              <span class="icon">left_panel_close</span>
+            </button>
+
+            <button
+              class="icon-button"
+              id="back-to-chat"
+              data-goto="chat"
+              title="Voltar para a conversa (Esc)"
+              hidden
+            >
+              <span class="icon">arrow_back</span>
+            </button>
+
+            <h1 class="topbar-title" id="topbar-title">Nova conversa</h1>
+
+            <div class="topbar-actions">
+              <div class="topbar-group" data-for="chat">
+                <div id="model-picker"></div>
+                <button class="icon-button" id="delete-chat" title="Apagar conversa">
+                  <span class="icon">delete</span>
+                </button>
+              </div>
+
+              <div class="topbar-group" data-for="docs" hidden>
+                <button class="button primary" id="add-document">
+                  <span class="icon">upload_file</span>
+                  Adicionar arquivo
+                </button>
+              </div>
+
+              <div class="topbar-group" data-for="settings" hidden>
+                <span class="saved-flag" id="saved-flag">
+                  <span class="icon">check_circle</span>
+                  Salvo
+                </span>
+              </div>
+            </div>
+          </header>
+
+          <div class="views">
+            <section class="view" data-view="chat">
+              <div class="messages" id="messages"></div>
+
+              <form class="composer" id="composer" autocomplete="off">
+                <div class="composer-inner">
+                  <textarea id="prompt" rows="1" placeholder="Pergunte alguma coisa"></textarea>
+                  <div class="composer-bar">
+                    <button type="button" class="chip" id="rag-toggle" aria-pressed="false">
+                      <span class="icon">book_2</span>
+                      Usar documentos
+                    </button>
+                    <button type="submit" class="send" id="send" title="Enviar">
+                      <span class="icon">send</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </section>
+
+            <section class="view" data-view="docs" hidden>
+              <div class="view-body">
+                <p class="lead">
+                  Cada arquivo vira trechos com embeddings no SQLite local. Nada sai daqui sem
+                  você pedir.
+                </p>
+
+                <div class="notice" id="rag-notice" hidden></div>
+                <div class="stat-row" id="rag-summary"></div>
+                <div class="doc-list" id="doc-list"></div>
+              </div>
+            </section>
+
+            <section class="view" data-view="settings" hidden>
+              <div class="view-body">
+                <section class="card provider-card-container">
+                  <div class="card-head">
+                    <h2>Provedores</h2>
+                    <p>Selecione um provedor para conversar e configure suas credenciais.</p>
+                  </div>
+                  <!-- Grid com cartões visuais e logos oficiais -->
+                  <div class="provider-grid" id="provider-cards"></div>
+                  <!-- Configuração específica do provedor ativo -->
+                  <div class="provider-details" id="provider-fields"></div>
+                </section>
+
+                <section class="card">
+                  <div class="card-head">
+                    <h2>Embeddings</h2>
+                    <p>
+                      Modelo que transforma texto em vetores. Trocar aqui esconde o que já foi
+                      indexado até você reindexar.
+                    </p>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <span class="field-label">Provedor</span>
+                      <div id="embed-provider-picker"></div>
+                      <span class="field-hint">Quem computa os vetores na indexação.</span>
+                    </div>
+                    <div class="field">
+                      <span class="field-label">Modelo</span>
+                      <div id="embed-model-picker"></div>
+                      <span class="field-hint">Modelo de incorporação dimensional.</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="card">
+                  <div class="card-head">
+                    <h2>Geração</h2>
+                    <p>Como o modelo responde e limites de contexto.</p>
+                  </div>
+
+                  <label class="field">
+                    <span class="field-label">Instrução do sistema</span>
+                    <textarea id="system-prompt" rows="3"></textarea>
+                    <span class="field-hint">Diretriz aplicada no topo de todas as conversas.</span>
+                  </label>
+
+                  <div class="field-row">
+                    <label class="field">
+                      <span class="field-label">
+                        Temperatura <b class="value-badge" id="temperature-value">0.7</b>
+                      </span>
+                      <input id="temperature" type="range" min="0" max="1.4" step="0.1" />
+                      <span class="field-hint">Baixa responde previsível, alta responde criativo.</span>
+                    </label>
+                    <label class="field">
+                      <span class="field-label">
+                        Top-p <b class="value-badge" id="top-p-value">1.0</b>
+                      </span>
+                      <input id="top-p" type="range" min="0.1" max="1" step="0.05" />
+                      <span class="field-hint">Corta a cauda de palavras improváveis.</span>
+                    </label>
+                  </div>
+
+                  <div class="field-row">
+                    <label class="field">
+                      <span class="field-label">Máximo de tokens na resposta</span>
+                      <input id="max-tokens" type="number" min="256" max="32768" step="256" />
+                      <span class="field-hint">Teto de geração por resposta.</span>
+                    </label>
+                    <label class="field">
+                      <span class="field-label">Mensagens enviadas de histórico</span>
+                      <input id="history-limit" type="number" min="2" max="100" step="2" />
+                      <span class="field-hint">Janela de contexto recente reenviada.</span>
+                    </label>
+                  </div>
+
+                  <p class="inline-note" id="sampling-note" hidden>
+                    <span class="icon">error</span>
+                    <span></span>
+                  </p>
+                </section>
+
+                <section class="card">
+                  <div class="card-head">
+                    <h2>Busca nos documentos</h2>
+                    <p>Como o RAG corta e seleciona os trechos mais relevantes.</p>
+                  </div>
+
+                  <div class="field-row">
+                    <label class="field">
+                      <span class="field-label">Trechos por pergunta</span>
+                      <input id="rag-top-k" type="number" min="1" max="12" step="1" />
+                      <span class="field-hint">Quantidade de melhores trechos injetados.</span>
+                    </label>
+                    <label class="field">
+                      <span class="field-label">
+                        Similaridade mínima <b class="value-badge" id="min-score-value">0.15</b>
+                      </span>
+                      <input id="rag-min-score" type="range" min="0" max="0.9" step="0.05" />
+                      <span class="field-hint">Abaixo disso o trecho é descartado.</span>
+                    </label>
+                  </div>
+
+                  <div class="field-row">
+                    <label class="field">
+                      <span class="field-label">Tamanho do trecho</span>
+                      <input id="chunk-size" type="number" min="500" max="8000" step="100" />
+                      <span class="field-hint">Em caracteres. Vale para novas indexações.</span>
+                    </label>
+                    <label class="field">
+                      <span class="field-label">Sobreposição</span>
+                      <input id="chunk-overlap" type="number" min="0" max="1000" step="50" />
+                      <span class="field-hint">Repete caracteres no início do próximo trecho.</span>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="card">
+                  <div class="card-head">
+                    <h2>Aparência & Atalhos</h2>
+                    <p>Tema visual e comportamento do teclado.</p>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <span class="field-label">Tema</span>
+                      <div id="theme-picker"></div>
+                      <span class="field-hint">Alterna entre tema claro, escuro ou do sistema.</span>
+                    </div>
+                    <div class="field">
+                      <span class="field-label">Enviar mensagem</span>
+                      <div id="send-key-picker"></div>
+                      <span class="field-hint">Comportamento da tecla Enter no composer.</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="card">
+                  <div class="card-head">
+                    <h2>Dados</h2>
+                    <p>Tudo fica em um arquivo SQLite nesta máquina.</p>
+                  </div>
+                  <div class="stat-row" id="storage-summary"></div>
+                  <p class="path" id="storage-path"></p>
+                  <div class="button-row">
+                    <button class="button" id="open-folder">
+                      <span class="icon">folder_open</span>
+                      Abrir pasta
+                    </button>
+                    <button class="button danger" id="clear-chats">
+                      <span class="icon">delete_sweep</span>
+                      Apagar todas as conversas
+                    </button>
+                  </div>
+                </section>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="drop-veil" id="drop-veil" hidden>
+      <div class="drop-card">
+        <span class="icon">upload_file</span>
+        Solte para indexar
+      </div>
+    </div>
+
+    <div class="toasts" id="toasts"></div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
