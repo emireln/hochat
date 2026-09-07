@@ -1,5 +1,7 @@
 # HoChat
 
+⚙️ EM DESENVOLVIMENTO
+
 Chatbot de desktop com RAG local. Fiz para estudar RAG na prática, então tudo que dá para fazer
 sem servidor roda aqui mesmo: conversas, documentos, embeddings e chaves ficam num SQLite na minha
 máquina.
